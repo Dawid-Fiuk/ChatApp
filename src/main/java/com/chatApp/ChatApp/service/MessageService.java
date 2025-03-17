@@ -19,34 +19,29 @@ public class MessageService {
     private final MessageRepository messageRepository;
     private final UserRepository userRepository;
 
-    public Message sendMessage(String senderUsername, String receiverUsername, String content){
-        Optional<User> senderOpt = userRepository.findByUsername(senderUsername);
-        Optional<User> receiverOpt = userRepository.findByUsername(receiverUsername);
+    public Message sendMessage(String senderUsername, String receiverUsername, String content) {
+        boolean senderExists = userRepository.findByUsername(senderUsername).isPresent();
+        boolean receiverExists = userRepository.findByUsername(receiverUsername).isPresent();
 
-        if (senderOpt.isEmpty() || receiverOpt.isEmpty()){
-            throw new IllegalArgumentException("Sender or receiver not found");
+        if (!senderExists || !receiverExists) {
+            throw new RuntimeException("Sender or Receiver not found");
         }
 
-        Message message = Message.builder()
-                .sender(senderOpt.get())
-                .receiver(receiverOpt.get())
-                .content(content)
-                .timestamp(LocalDateTime.now())
-                .build();
+        Message message = new Message();
+        message.setSenderUsername(senderUsername);
+        message.setReceiverUsername(receiverUsername);
+        message.setContent(content);
+        message.setTimestamp(LocalDateTime.now());
 
         return messageRepository.save(message);
     }
 
-    public List<Message> getChatHistory(String user1, String user2){
-        Optional<User> user1Opt = userRepository.findByUsername(user1);
-        Optional<User> user2Opt = userRepository.findByUsername(user2);
 
-        if(user1Opt.isEmpty() || user2Opt.isEmpty()){
-            throw new IllegalArgumentException("one or both users not found");
-        }
 
-        return messageRepository.findBySenderAndReceiverOrderByTimestampAsc(user1Opt.get(), user2Opt.get());
+    public List<Message> getChatHistory(String user1, String user2) {
+        return messageRepository.findBySenderUsernameAndReceiverUsernameOrderByTimestampAsc(user1, user2);
     }
+
 
 
 }

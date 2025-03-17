@@ -16,22 +16,24 @@ public class MessageController {
     private final MessageService messageService;
 
     @PostMapping("/send")
-    public ResponseEntity<Message> sendMessage(
-            @RequestParam String sender,
-            @RequestParam String receiver,
-            @RequestParam String content){
-        Message message = messageService.sendMessage(sender, receiver, content);
-        return ResponseEntity.ok(message);
+    public ResponseEntity<Message> sendMessage(@RequestBody Message message) {
+        Message savedMessage = messageService.sendMessage(
+                message.getSenderUsername(),
+                message.getReceiverUsername(),
+                message.getContent()
+        );
+        return ResponseEntity.ok(savedMessage);
     }
+
 
     @GetMapping("/history")
     public ResponseEntity<List<Message>> getChatHistory(
             @RequestParam String user1,
-            @RequestParam String user2,
-            @RequestParam String content){
+            @RequestParam String user2){
         List<Message> chatHistory = messageService.getChatHistory(user1, user2);
         return ResponseEntity.ok(chatHistory);
     }
+
 
 
 }
