@@ -31,3 +31,22 @@ build/
 
 ### VS Code ###
 .vscode/
+
+# Node.js
+node_modules/
+dist/
+build/
+
+# IDE i systemowe
+.vscode/
+.idea/
+.DS_Store
+
+# Logi
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Śmieci z Reacta
+public/*.cache
+
